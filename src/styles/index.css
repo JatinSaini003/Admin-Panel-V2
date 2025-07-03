@@ -1,0 +1,97 @@
+/* Typography utilities */
+@import './typography.css';
+
+/* Tailwind Utility Classes */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom Fonts */
+@font-face {
+    font-family: 'Berlin Sans FB';
+    src: url('/assets/fonts/berlinsansfb_reg.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-Medium';
+    src: url('/assets/fonts/Gilroy-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-Regular';
+    src: url('/assets/fonts/Gilroy-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-SemiBold';
+    src: url('/assets/fonts/Gilroy-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-SemiBold-Italic';
+    src: url('/assets/fonts/Gilroy-SemiBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-Bold';
+    src: url('/assets/fonts/Gilroy-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-Light';
+    src: url('/assets/fonts/Gilroy-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Gilroy-RegularItalic';
+    src: url('/assets/fonts/Gilroy-RegularItalic.ttf');
+}
+
+/* Utility font classes */
+.font-berlin {
+    font-family: 'Berlin Sans FB', sans-serif;
+}
+
+.font-gilroy-medium {
+    font-family: 'Gilroy-Medium', sans-serif;
+}
+
+.font-gilroy-regular {
+    font-family: 'Gilroy-Regular', sans-serif;
+}
+
+.font-gilroy-semibold {
+    font-family: 'Gilroy-SemiBold', sans-serif;
+}
+
+.font-gilroy-bold {
+    font-family: 'Gilroy-Bold', sans-serif;
+}
+
+.font-gilroy-light {
+    font-family: 'Gilroy-Light', sans-serif;
+}
+
+.font-gilroy-italic {
+    font-family: 'Gilroy-RegularItalic', sans-serif;
+}
+
+/* Hide Scrollbars */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

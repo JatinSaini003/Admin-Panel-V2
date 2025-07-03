@@ -1,0 +1,37 @@
+@layer utilities {
+    .text-display {
+        @apply text-[1.75rem] leading-[1.1] font-gilroySemiBold;
+    }
+
+    .text-heading {
+        @apply text-[1.5rem] leading-[1.2] font-gilroySemiBold;
+    }
+
+    .text-subheading-semibold {
+        @apply text-[1.25rem] leading-[1.2] font-gilroySemiBold;
+    }
+
+    .text-subheading-regular {
+        @apply text-[1.25rem] leading-[1.2] font-gilroyRegular;
+    }
+
+    .text-body-semibold {
+        @apply text-[1.125rem] leading-[1.2] font-gilroySemiBold;
+    }
+
+    .text-body-regular {
+        @apply text-[1.125rem] leading-[1.2] font-gilroyRegular;
+    }
+
+    .text-description-medium {
+        @apply text-[1rem] leading-[1.5] font-gilroyMedium;
+    }
+
+    .text-description-regular {
+        @apply text-[1rem] leading-[1.5] font-gilroyRegular;
+    }
+
+    .text-caption {
+        @apply text-[0.875rem] leading-[1.5] font-gilroyRegular;
+    }
+}
