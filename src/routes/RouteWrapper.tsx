@@ -1,5 +1,3 @@
-import React from "react";
-import { useRoutes } from "react-router-dom";
 import type { CustomRoute } from "./route.types";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 
@@ -7,8 +5,8 @@ import PrivateRoute from "./PrivateRoute/PrivateRoute";
 /**
  * Recursively process route config and wrap with PrivateRoute if needed.
  */
-const renderRoutes = (routes: CustomRoute[]): any =>
-    routes.map(({ requiresAuth, roles, children, ...route }) => {
+const RouteWrapper = (routes: CustomRoute[]): any =>
+    routes.map(({ requiresAuth, roles, meta, children, ...route }) => {
         const element = requiresAuth ? (
             <PrivateRoute allowedRoles={roles}>{route.element}</PrivateRoute>
         ) : (
@@ -18,18 +16,10 @@ const renderRoutes = (routes: CustomRoute[]): any =>
         return {
             ...route,
             element,
-            children: children ? renderRoutes(children) : undefined,
+            handle: meta,
+            children: children ? RouteWrapper(children) : undefined,
         };
     });
 
-
-/**
- * RouteWrapper uses React Router's useRoutes to render all app routes.
- */
-const RouteWrapper: React.FC<{ routes: CustomRoute[] }> = ({ routes }) => {
-    const renderedRoutes = renderRoutes(routes);
-    const element = useRoutes(renderedRoutes);
-    return <>{element}</>;
-};
 
 export default RouteWrapper;

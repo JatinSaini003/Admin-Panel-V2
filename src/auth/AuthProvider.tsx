@@ -38,10 +38,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchPolicy: "network-only",
         onCompleted: (data) => {
             setUser(data.getAdminProfile.user);
+            setLoading(false);
         },
         onError: () => {
             clearToken();
             setUser(null);
+            setLoading(false);
         },
     });
 

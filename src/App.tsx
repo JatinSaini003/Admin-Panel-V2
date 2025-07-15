@@ -1,18 +1,5 @@
-// function App() {
-//   return (
-//     <>
-//       <div className="bg-background-default text-primary h-screen flex items-center justify-center text-display">
-//         Welcome to PeerHub Admin Panel
-//       </div>
-//     </>
-//   )
-// }
-
-// export default App
-
-
-import RouteWrapper from "./routes/RouteWrapper";
-import appRoutes from "./routes/appRoutes";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/appRoutes";
 
 
 /**
@@ -20,7 +7,7 @@ import appRoutes from "./routes/appRoutes";
  * Contains all route definitions wrapped inside layout/auth guards.
  */
 function App() {
-  return <RouteWrapper routes={appRoutes} />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

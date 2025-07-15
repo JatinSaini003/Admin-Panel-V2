@@ -19,13 +19,14 @@ export default {
         // UI Surface
         background: {
           default: '#0B1E29',
+          muted: '#142D3C',
           light: '#243139',
           active: '#2C3B44',
         },
 
         border: {
           default: '#605E5E',
-          dark: "#EAECF0",
+          light: "#EAECF0",
           muted: '#444444',
         },
 
@@ -53,7 +54,6 @@ export default {
         gilroyLight: ["Gilroy-Light", 'sans-serif'],
         gilroyItalic: ["Gilroy-RegularItalic", 'sans-serif'],
       },
-
     },
   },
   plugins: [],

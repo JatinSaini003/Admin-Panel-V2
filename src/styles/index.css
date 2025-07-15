@@ -10,42 +10,42 @@
 /* Custom Fonts */
 @font-face {
     font-family: 'Berlin Sans FB';
-    src: url('/assets/fonts/berlinsansfb_reg.ttf');
+    src: url('../assets/fonts/berlinsansfb_reg.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-Medium';
-    src: url('/assets/fonts/Gilroy-Medium.ttf');
+    src: url('../assets/fonts/Gilroy-Medium.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-Regular';
-    src: url('/assets/fonts/Gilroy-Regular.ttf');
+    src: url('../assets/fonts/Gilroy-Regular.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-SemiBold';
-    src: url('/assets/fonts/Gilroy-SemiBold.ttf');
+    src: url('../assets/fonts/Gilroy-SemiBold.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-SemiBold-Italic';
-    src: url('/assets/fonts/Gilroy-SemiBoldItalic.ttf');
+    src: url('../assets/fonts/Gilroy-SemiBoldItalic.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-Bold';
-    src: url('/assets/fonts/Gilroy-Bold.ttf');
+    src: url('../assets/fonts/Gilroy-Bold.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-Light';
-    src: url('/assets/fonts/Gilroy-Light.ttf');
+    src: url('../assets/fonts/Gilroy-Light.ttf');
 }
 
 @font-face {
     font-family: 'Gilroy-RegularItalic';
-    src: url('/assets/fonts/Gilroy-RegularItalic.ttf');
+    src: url('../assets/fonts/Gilroy-RegularItalic.ttf');
 }
 
 /* Utility font classes */

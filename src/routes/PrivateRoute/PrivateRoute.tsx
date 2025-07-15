@@ -1,6 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import React from "react";
+import Lottie from "lottie-react";
+import Hammer from '../../assets/Loader/Hammer.json'
 
 type Props = {
     allowedRoles?: string[];
@@ -10,7 +12,13 @@ type Props = {
 const PrivateRoute: React.FC<Props> = ({ allowedRoles, children }) => {
     const { user, loading } = useAuth();
 
-    if (loading) return <div className="text-default bg-background-default p-4">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-background-default">
+                <Lottie animationData={Hammer} loop />
+            </div>
+        );
+    }
 
     if (!user || !user.email.endsWith("@peerhub.in")) {
         return <Navigate to="/login" replace />;

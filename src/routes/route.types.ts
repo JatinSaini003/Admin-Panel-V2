@@ -6,6 +6,7 @@ export interface RouteMeta {
     pageDescription?: string;
 }
 
+
 export type CustomRoute = RouteObject & {
     element: ReactElement;
     requiresAuth?: boolean;
@@ -13,3 +14,17 @@ export type CustomRoute = RouteObject & {
     meta?: RouteMeta;
     children?: CustomRoute[];
 };
+
+
+/**
+ * Nav item type for DashBoard Navbar routes
+ */
+export interface NavItemType {
+    label: string;
+    path: string;
+    icon: {
+        inactive: string;
+        active: string;
+    };
+    group: "PROFILE" | "MAIN" | "OTHERS" | "LOGOUT";
+}

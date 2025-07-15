@@ -4,8 +4,8 @@ import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "./apollo/client";
 import App from "./App";
 import "./styles/index.css";
-import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthProvider";
+import GlobalErrorBoundary from "./utils/ErrorHandlers/GlobalErrorBoundary";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,17 +14,17 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     {/* Apollo GraphQL Provider */}
     <ApolloProvider client={apolloClient}>
 
-      {/* React Router for handling proper routing */}
-      <BrowserRouter>
+      {/* Auth Context provider (Manages auth states) */}
+      <AuthProvider>
 
-        {/* Auth Context provider (Manages auth states) */}
-        <AuthProvider>
+        {/* Global error boundary for handling unexpected errors */}
+        <GlobalErrorBoundary>
 
           <App />
-          <ToastContainer />
+          <ToastContainer position="top-right" autoClose={3000} theme="colored" closeOnClick={true} pauseOnHover={true} draggable={true} />
 
-        </AuthProvider>
-      </BrowserRouter>
+        </GlobalErrorBoundary>
+      </AuthProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

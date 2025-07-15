@@ -1,8 +1,9 @@
 import type { CustomRoute } from "./route.types";
 import DashboardLayout from "../components/layout/DashboardLayout";
-import Dashboard from "../components/Dashboard/Dashboard";
-import MyProfile from "../components/MyProfile/MyProfile";
-import Clubs from "../components/Club/Club";
+import Dashboard from "../pages/Dashboard/Dashboard";
+import MyProfile from "../pages/MyProfile/MyProfile";
+import Clubs from "../pages/Club/Club";
+import RouteError from "../utils/ErrorHandlers/RouteError";
 
 
 /**
@@ -12,10 +13,11 @@ const protectedRoutes: CustomRoute[] = [
     {
         path: "/",
         element: <DashboardLayout />,
+        errorElement: <RouteError />,
         requiresAuth: true,
         children: [
             {
-                path: "",
+                index: true,
                 element: <Dashboard />,
                 meta: {
                     pageName: "Dashboard",
@@ -27,6 +29,7 @@ const protectedRoutes: CustomRoute[] = [
                 element: <MyProfile />,
                 meta: {
                     pageName: "My Profile",
+                    pageDescription: "Manage your account details and preferences"
                 },
             },
             {
@@ -37,7 +40,46 @@ const protectedRoutes: CustomRoute[] = [
                     pageDescription: "Create, manage, and oversee club activities",
                 },
             },
-            // Add more routes here...
+            {
+                path: "events",
+                element: <Clubs />,
+                meta: {
+                    pageName: "Events",
+                    pageDescription: "Organize, track, and manage event details",
+                },
+            },
+            {
+                path: "groups",
+                element: <Clubs />,
+                meta: {
+                    pageName: "Groups",
+                    pageDescription: "Manage student communities and group activities",
+                },
+            },
+            {
+                path: "user-info",
+                element: <Clubs />,
+                meta: {
+                    pageName: "User Info",
+                    pageDescription: "View and manage user details, status, and activity",
+                },
+            },
+            {
+                path: "pending-verifications",
+                element: <Clubs />,
+                meta: {
+                    pageName: "Pending Verifications",
+                    pageDescription: "Review all pending submissions awaiting approval or action.",
+                },
+            },
+            {
+                path: "reports-violations",
+                element: <Clubs />,
+                meta: {
+                    pageName: "Reports & Violations",
+                    pageDescription: "Track reported issues and take necessary actions.",
+                },
+            },
         ],
     },
 ];
