@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -53,7 +53,7 @@ function EventCreate() {
     });
 
     // Locations Data
-    const { data: locationData, loading: locationLoading, error: locationError } = useQuery(GET_LOCATIONS, {
+    const { data: locationData, loading: locationLoading } = useQuery(GET_LOCATIONS, {
         variables: {
             input: {
                 limit: 100,

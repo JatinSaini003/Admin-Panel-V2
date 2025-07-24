@@ -36,7 +36,7 @@ const collegeArray = [
     {
         id: 1,
         college: "Amity University",
-        Members: 90,
+        totalUsers: 90,
         name: "Amity (2022-2023)",
     },
 ];

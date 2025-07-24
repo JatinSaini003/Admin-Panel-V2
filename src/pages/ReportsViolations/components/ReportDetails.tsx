@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ReportPost from "./ReportPost";
+// import ReportPost from "./ReportPost";
 
 const ReportDetails: React.FC = () => {
     const navigate = useNavigate();
@@ -10,7 +10,7 @@ const ReportDetails: React.FC = () => {
             <div className="flex flex-col gap-4 border border-white bg-[#0B1E29] w-[688px] h-[460px] p-10">
                 <div className="grid md:grid-cols-2 gap-4">
                     {/* Left: Post */}
-                    <ReportPost />
+                    {/* <ReportPost /> */}
 
                     {/* Right: Info Section */}
                     <div className="space-y-4">

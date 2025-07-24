@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, NetworkStatus, ApolloClient } from "@apollo/client";
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 import { Carousel, ClubCard, CreateItem } from "../../components/UI/Reusable";
@@ -43,7 +43,7 @@ export const handleDeleteClub = async (id: string, client: ApolloClient<object>,
 };
 
 const Club = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const { data, loading, error, refetch, networkStatus } = useQuery<GetClubsResponse>(GET_CLUBS, {
         variables: {
@@ -71,9 +71,9 @@ const Club = () => {
 
 
     // Navigate to edit details
-    const handleEdit = (id: string) => {
-        navigate(`/club/details/${id}`);
-    };
+    // const handleEdit = (id: string) => {
+    //     navigate(`/club/details/${id}`);
+    // };
 
     if (error) {
         return (
