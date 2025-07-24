@@ -31,7 +31,7 @@ function DashboardLayout() {
     const { searchQuery, setSearchQuery } = useGlobalSearch();
 
     const handleSearchSubmit = () => {
-        console.log("Search triggered from DashboardLayout:", searchQuery, "Page:", location.pathname);
+        // console.log("Search triggered from DashboardLayout:", searchQuery, "Page:", location.pathname);
         // Pages will use searchQuery via context and run refetch logic accordingly
     };
 

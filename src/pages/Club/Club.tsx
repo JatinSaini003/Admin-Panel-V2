@@ -37,7 +37,7 @@ export const handleDeleteClub = async (id: string, client: ApolloClient<object>,
             if (refetch) await refetch();
         }
     } catch (err) {
-        console.error("Error deleting club:", err);
+        // console.error("Error deleting club:", err);
         toast.error("Failed to delete club");
     }
 };

@@ -119,7 +119,7 @@ function GroupCreate() {
                 toast.success("Group Updated Successfully");
                 setActionType("update");
             } else {
-                console.log("payload data : ", payload)
+                // console.log("payload data : ", payload)
                 await createGroup({ variables: { input: payload } });
                 toast.success("Group Created Successfully");
                 setActionType("create");

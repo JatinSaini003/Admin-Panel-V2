@@ -25,7 +25,7 @@ const CreateItem: React.FC<CreateItemProps> = ({ name, variant }) => {
                 navigate("/group/create");
                 break;
             default:
-                console.warn("Invalid variant provided to CustomCreate");
+            // console.warn("Invalid variant provided to CustomCreate");
         }
     };
 

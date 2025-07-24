@@ -91,7 +91,7 @@ function ClubCreate() {
             body: file,
         });
         setUploadedPhotoKey(key);
-        console.log(uploadedPhotoKey)
+        // console.log(uploadedPhotoKey)
 
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -138,7 +138,7 @@ function ClubCreate() {
                 toast.success("Club Updated Successfully");
                 setActionType("update");
             } else {
-                console.log("Payload being sent to server:", payload);
+                // console.log("Payload being sent to server:", payload);
                 await createClub({ variables: { input: payload } });
                 toast.success("Club Created Successfully");
                 setActionType("create");

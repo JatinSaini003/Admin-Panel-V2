@@ -65,7 +65,7 @@ function ClubMembers() {
                 toast.error("Failed to remove member");
             }
         } catch (err: any) {
-            console.error("Mutation error:", err.message);
+            // console.error("Mutation error:", err.message);
             toast.error("Something went wrong while removing the member");
         }
     };

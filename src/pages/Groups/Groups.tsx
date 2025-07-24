@@ -30,14 +30,14 @@ export const handleDeleteGroup = async (id: string, client: ApolloClient<object>
                 groupId: id,
             },
         });
-        console.log(response)
+        // console.log(response)
 
         if (response?.data?.deleteGroup?.message) {
             toast.success("Group deleted successfully");
             if (refetch) await refetch();
         }
     } catch (err) {
-        console.error("Error deleting group:", err);
+        // console.error("Error deleting group:", err);
         toast.error("Failed to delete group");
     }
 };

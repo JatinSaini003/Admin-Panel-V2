@@ -58,7 +58,7 @@ const FullListPage = () => {
             if (onSuccess) await onSuccess();
             toast.success("Post deleted successfully");
         } catch (error) {
-            console.error("Error deleting post:", error);
+            // console.error("Error deleting post:", error);
             toast.error("Failed to delete post");
         }
     };

@@ -134,7 +134,7 @@ function EventCreate() {
                 toast.success("Event Updated Successfully");
                 setActionType("update");
             } else {
-                console.log("Payload being sent to server:", payload);
+                // console.log("Payload being sent to server:", payload);
                 await createEvent({ variables: { input: payload } });
                 toast.success("Club Created Successfully");
                 setActionType("create");
@@ -145,7 +145,7 @@ function EventCreate() {
             setShowConfirmation(true);
         } catch (e: any) {
             toast.error(`${isEditMode ? "Update" : "Creation"} failed. ${e.message}`);
-            console.log(e.message)
+            // console.log(e.message)
         }
     };
 

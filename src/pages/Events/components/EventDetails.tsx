@@ -71,7 +71,7 @@ const EventDetails = () => {
             setIsEditing(false);
         } catch (err) {
             toast.error("updation failed");
-            console.error("Update failed:", err);
+            // console.error("Update failed:", err);
         }
     };
 

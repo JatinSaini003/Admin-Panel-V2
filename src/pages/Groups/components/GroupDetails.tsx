@@ -37,7 +37,7 @@ const GroupDetails = () => {
     useEffect(() => {
         if (GroupData?.getGroupDetails) {
             const details = GroupData.getGroupDetails;
-            console.log(details)
+            // console.log(details)
             const formattedGroup = {
                 ...details,
                 createdOn: details.createdAt
@@ -64,7 +64,7 @@ const GroupDetails = () => {
             setIsEditing(false);
         } catch (err) {
             toast.error("updation failed");
-            console.error("Update failed:", err);
+            // console.error("Update failed:", err);
         }
     };
 
