@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { ADMIN_LOGIN, GET_ADMIN_PROFILE } from "../queries/authQueries.ts";
 import { getToken, setToken, clearToken } from "./authUtils";
@@ -8,15 +8,18 @@ type User = {
     email: string;
     firstName: string;
     lastName: string;
+    phoneNumber?: string;
     profilePicId: string;
     __typename?: string;
 };
 
 type AuthContextType = {
     user: User | null;
+    setUser: Dispatch<SetStateAction<User | null>>;
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
+    refetchProfile: () => Promise<void>;
 };
 
 
@@ -34,7 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     const [loginMutation] = useMutation(ADMIN_LOGIN);
-    const [fetchProfile] = useLazyQuery(GET_ADMIN_PROFILE, {
+
+    const [fetchProfile, { refetch }] = useLazyQuery(GET_ADMIN_PROFILE, {
         fetchPolicy: "network-only",
         onCompleted: (data) => {
             setUser(data.getAdminProfile.user);
@@ -46,6 +50,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setLoading(false);
         },
     });
+
+    const refetchProfile = async () => {
+        try {
+            const { data } = await refetch(); // Explicit refetch
+            if (data?.getAdminProfile?.user) {
+                setUser(data.getAdminProfile.user);
+            } else {
+                // fallback: re-trigger the query manually
+                await fetchProfile();
+            }
+        } catch {
+            setUser(null);
+            clearToken();
+        }
+    };
 
     /**
      * Handles login and token setting
@@ -85,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, loading, login, logout, refetchProfile }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,16 +1,18 @@
-import { useState } from "react";
-import { Outlet, useLocation, useMatches } from "react-router-dom";
-import { Search, ChevronDown } from "lucide-react";
+import { useState, type KeyboardEvent } from "react";
+import { Outlet, useLocation, useMatches, useNavigate } from "react-router-dom";
+import { Search, ChevronDown, ChevronLeft } from "lucide-react";
 import { useAuth } from "../../auth/useAuth";
 import { type RouteMeta } from "../../routes/route.types";
 import { navItems } from "../../routes/NavbarRoutes/NavbarRoutes";
 import NavItem from "../UI/NavItem";
-import LogoutPopUP from "../../components/UI/LogoutPopUP";
+import ConfirmationPopup from "../UI/Reusable/ConfirmationPopup";
 
 // Image imports
 import PeerHubLogo from "../../assets/img/PeerHubLogo.png";
 import PeerHubSmallLogo from "../../assets/img/peerhub-small-logo.png";
 import AdminImage from "../../assets/img/AdminImage.png";
+import { clearToken } from "../../auth/authUtils";
+import { useGlobalSearch } from "../../search/SearchContext";
 
 
 /**
@@ -23,6 +25,22 @@ function DashboardLayout() {
     const [openLogOutPopup, setOpenLogOutPopup] = useState(false);
     const matches = useMatches();
     const { user } = useAuth();
+    const navigate = useNavigate();
+
+    // Global Search State
+    const { searchQuery, setSearchQuery } = useGlobalSearch();
+
+    const handleSearchSubmit = () => {
+        console.log("Search triggered from DashboardLayout:", searchQuery, "Page:", location.pathname);
+        // Pages will use searchQuery via context and run refetch logic accordingly
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearchSubmit();
+        }
+    };
 
     /**
      * Fetching meta data of respective routes.
@@ -35,6 +53,17 @@ function DashboardLayout() {
         MAIN: navItems.filter((item) => item.group === "MAIN"),
         OTHERS: navItems.filter((item) => item.group === "OTHERS"),
         LOGOUT: navItems.filter((item) => item.group === "LOGOUT"),
+    };
+
+    // Handle actions for the logout buttons
+    const handleLogout = () => {
+        clearToken();
+        setOpenLogOutPopup(false);
+        navigate("/login");
+    };
+
+    const handleStayLoggedIn = () => {
+        setOpenLogOutPopup(false);
     };
 
     return (
@@ -136,15 +165,26 @@ function DashboardLayout() {
                 {/* -------------------- Header -------------------- */}
                 <header className="flex items-center justify-between mx-8 pt-6 h-[6.375rem] border-b border-border-default bg-background-default">
                     {/* -------------------- Right Section -------------------- */}
-                    <div>
-                        <h1 className="text-heading text-default">
-                            {currentRoute.pageName || "Dashboard"}
-                        </h1>
-                        {currentRoute.pageDescription && (
-                            <p className="text-caption text-muted">
-                                {currentRoute.pageDescription}
-                            </p>
+                    <div className="flex items-center gap-2">
+                        {currentRoute.backButton && (
+                            <button
+                                onClick={() => navigate(-1)}
+                                aria-label="Go back"
+                                className="p-2 rounded hover:bg-background-light transition"
+                            >
+                                <ChevronLeft className="h-5 w-5 text-default" />
+                            </button>
                         )}
+                        <div>
+                            <h1 className="text-heading text-default">
+                                {currentRoute.pageName || "Dashboard"}
+                            </h1>
+                            {currentRoute.pageDescription && (
+                                <p className="text-caption text-muted">
+                                    {currentRoute.pageDescription}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     {/* -------------------- Left Section -------------------- */}
@@ -156,6 +196,9 @@ function DashboardLayout() {
                                 type="search"
                                 placeholder="Search"
                                 className="w-[15.625rem] h-[3rem] pl-10 bg-background-active border-border-muted font-gilroy-regular text-muted placeholder:text-muted focus:outline-none"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={handleKeyDown}
                             />
                         </div>
 
@@ -186,9 +229,13 @@ function DashboardLayout() {
 
             {/* -------------------- Logout Popup -------------------- */}
             {openLogOutPopup && (
-                <LogoutPopUP
-                    openLogOutPopup={openLogOutPopup}
-                    setOpenLogOutPopup={setOpenLogOutPopup}
+                <ConfirmationPopup
+                    isOpen={openLogOutPopup}
+                    message="Are you sure you want to logout?"
+                    confirmLabel="Log me out"
+                    cancelLabel="Stay logged in"
+                    onConfirm={handleLogout}
+                    onCancel={handleStayLoggedIn}
                 />
             )}
         </div>

@@ -39,8 +39,18 @@
         /* 16 px */
     }
 
+    .text-captionMedium {
+        @apply text-[0.875rem] leading-[1.5] font-gilroyMedium;
+        /* 14 px */
+    }
+
     .text-caption {
         @apply text-[0.875rem] leading-[1.5] font-gilroyRegular;
         /* 14 px */
+    }
+
+    .text-small {
+        @apply text-[0.75rem] leading-[1] font-gilroyRegular;
+        /* 12 px */
     }
 }

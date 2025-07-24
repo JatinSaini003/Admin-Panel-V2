@@ -95,3 +95,57 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+@layer utilities {
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        box-shadow: 0 0 0px 1000px #0B1E29 inset !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+}
+
+@layer utilities {
+
+    select,
+    select option {
+        background-color: #0B1E29 !important;
+        color: white !important;
+        border: none;
+    }
+
+    /* Optional: when a value is selected (not placeholder) */
+    select:valid {
+        background-color: #0B1E29 !important;
+        color: white !important;
+    }
+
+    select:disabled {
+        background-color: #0B1E29 !important;
+        color: white !important;
+    }
+}
+
+.custom-dropdown {
+    @apply bg-white text-gray-800 border border-gray-300 rounded py-2;
+}
+
+.custom-dropdown option {
+    background-color: #0B1E29;
+    /* dropdown bg */
+    color: #FFFFFF;
+    /* dropdown text */
+}
+
+option {
+    color: #FFFFFF;
+    background-color: #0B1E29;
+}
