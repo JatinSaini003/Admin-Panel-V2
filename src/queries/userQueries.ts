@@ -300,3 +300,9 @@ export const Delete_Post = gql`
     }
   }
 `;
+
+export const Delete_User = gql`
+  mutation DeleteUserByAdmin ($id: String!) {
+    deleteUserByAdmin(input: { id: $id })
+  }
+`;

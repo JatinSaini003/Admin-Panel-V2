@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery, useMutation } from "@apollo/client";
 
 // Queries & Mutations
@@ -8,7 +8,8 @@ import {
     Get_Posts,
     GET_LIKED_POSTS,
     GET_USER_REGISTERED_EVENTS,
-    GET_USER_JOINED_CLUBS
+    GET_USER_JOINED_CLUBS,
+    Delete_User
 } from "../../queries/userQueries";
 
 //Images
@@ -26,9 +27,11 @@ import {
     EventCard,
     GroupCard,
     // HorizontalScrollWrapper,
-    Carousel
+    Carousel,
+    ConfirmationPopup
 } from "../../components/UI/Reusable/index";
 import { ScaleLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 
 // Mocked Groups
@@ -43,12 +46,41 @@ const collegeArray = [
 
 const UserDetails = () => {
     const { studentId } = useParams();
+    // console.log(studentId)
     const [userDetails, setUserDetails] = useState<any>(null);
     const [userImage, setUserImage] = useState<string>("");
     const [clubsArray, setClubsArray] = useState<any[]>([]);
     const [postsArray, setPostsArray] = useState<any[]>([]);
     const [likedPostsArray, setLikedPostsArray] = useState<any[]>([]);
     const [eventArray, setEventArray] = useState<any[]>([]);
+    const navigate = useNavigate();
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    // const [userId, setUserId] = useState<null>(null);
+
+
+    const [DeleteUserByAdmin] = useMutation(Delete_User);
+
+    const handleDeleteUser = async () => {
+        if (!studentId) return;
+
+        try {
+            // console.log("start : ", studentId)
+            await DeleteUserByAdmin({
+                variables: {
+                    id: studentId
+                },
+            });
+            // console.log("finish : ", studentId)
+            toast.success(`User Deleted successfully!`);
+            setIsPopupOpen(false);
+            navigate(-1);
+        } catch (error) {
+            toast.error("Action failed. Please try again.");
+            console.error(error);
+            setIsPopupOpen(false);
+        }
+    }
 
     // ------------------ User Info ------------------
     const { data, loading, error } = useQuery(Get_User_Info, {
@@ -146,6 +178,19 @@ const UserDetails = () => {
                         image={userImage || DefaultAvatar}
                         heading={userDetails?.name || ""}
                         subHeading="Profile Picture"
+                        actionButtons={
+                            <>
+                                <button
+                                    className="px-4 py-3 bg-transparent text-red-500 border border-red-500 text-sm rounded hover:bg-red-600 hover:text-default"
+                                    onClick={() => {
+                                        setIsPopupOpen(true)
+                                        // setUserId(userDetails.id);
+                                    }}
+                                >
+                                    Delete User
+                                </button>
+                            </>
+                        }
                     />
                 </div>
 
@@ -271,6 +316,17 @@ const UserDetails = () => {
                 </section>
 
             </div>
+            <ConfirmationPopup
+                isOpen={isPopupOpen}
+                message={`Are you sure you want to delete this user`}
+                confirmLabel="yes"
+                cancelLabel="Cancel"
+                onConfirm={handleDeleteUser}
+                onCancel={() => {
+                    // setUserId(null);
+                    setIsPopupOpen(false);
+                }}
+            />
         </div>
     );
 };
