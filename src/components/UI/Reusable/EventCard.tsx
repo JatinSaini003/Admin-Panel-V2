@@ -3,7 +3,7 @@ interface Event {
     imageId: string;
     name: string;
     addedBy: string;
-    startDateTime?: string;
+    createdAt?: string;
 }
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 
 const CustomEventCard: React.FC<Props> = ({ event }) => {
     // const navigate = useNavigate();
-    const date = event.startDateTime ? event.startDateTime.split("T")[0] : ""
+    const date = event.createdAt ? event.createdAt.split("T")[0] : ""
 
     return (
         <div className="relative group h-[220px] w-[220px] overflow-hidden">

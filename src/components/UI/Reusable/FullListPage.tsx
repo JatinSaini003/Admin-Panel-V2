@@ -20,7 +20,7 @@ import { useGlobalSearch } from "../../../search/SearchContext";
 // Components
 import { Post, EventCard, GroupCard, Pagination } from "./";
 import { ScaleLoader } from "react-spinners";
-import { Get_Events } from "../../../queries/eventQueries";
+import { Get_Events, Get_User_Requested_Events } from "../../../queries/eventQueries";
 import { toast } from "react-toastify";
 
 const FullListPage = () => {
@@ -161,7 +161,7 @@ const FullListPage = () => {
     };
 
     // Queries
-    const { data: ongoingClubData, loading: ongoingClubLoading, error: ongoingClubError, refetch: ongoingRefetch } = useQuery(GET_CLUBS, {
+    const { loading: ongoingClubLoading, error: ongoingClubError, refetch: ongoingRefetch } = useQuery(GET_CLUBS, {
         variables: {
             category: "",
             page,
@@ -186,13 +186,19 @@ const FullListPage = () => {
         fetchPolicy: "network-only"
     });
 
-    const { data: filteredEventsData, loading: filteredEventsLoading, error: filteredEventsError, refetch: filteredEventsRefetch } = useQuery(Get_Events, {
+    const { loading: pendingeventLoading, error: pendingeventError, refetch: pendingeventsRefetch } = useQuery(Get_User_Requested_Events, {
+        variables: { input: { page, limit: itemsPerPage, search: searchQuery } },
+        skip: type !== "pending-events",
+        fetchPolicy: "network-only"
+    });
+
+    const { loading: filteredEventsLoading, error: filteredEventsError, refetch: filteredEventsRefetch } = useQuery(Get_Events, {
         variables: { input: { status: type.replace("-events", "").toUpperCase(), page, limit: itemsPerPage, search: searchQuery } },
         skip: !["upcoming-events", "cancelled-events", "completed-events"].includes(type),
         fetchPolicy: "network-only"
     });
 
-    const { data: clubeventsData, loading: clubeventsLoading, refetch: clubEventsRefetch } = useQuery(Get_Events, {
+    const { loading: clubeventsLoading, refetch: clubEventsRefetch } = useQuery(Get_Events, {
         variables: { input: { clubId: clubId, status: "UPCOMING", page, limit: itemsPerPage, search: searchQuery } },
         skip: !clubId,
         fetchPolicy: "network-only"
@@ -204,7 +210,7 @@ const FullListPage = () => {
         fetchPolicy: "network-only"
     });
 
-    const { data: groupData, loading: groupLoading, error: groupError, refetch: groupRefetch } = useQuery(Get_All_Groups, {
+    const { loading: groupLoading, error: groupError, refetch: groupRefetch } = useQuery(Get_All_Groups, {
         variables: { page, limit: itemsPerPage },
         skip: type !== "ongoingGroups",
         fetchPolicy: "network-only"
@@ -222,19 +228,32 @@ const FullListPage = () => {
 
             case "clubPosts":
                 if (!clubId) break;
-                const clubPostResult = await getPosts({
+
+                const clubPostRes = await getPosts({
                     variables: {
                         input: {
                             clubId,
                             page,
                             limit: itemsPerPage,
                             search: searchQuery
-                        },
-                    },
+                        }
+                    }
                 });
-                setItems(clubPostResult?.data?.getPosts?.posts ?? []);
-                setHasMore(clubPostResult?.data?.getPosts?.hasMore ?? false);
+
+                const fetchedPosts = clubPostRes?.data?.getPosts?.posts ?? [];
+                const hasMorePosts = clubPostRes?.data?.getPosts?.hasMore ?? false;
+
+                setItems((prevItems) => {
+                    const uniqueMap = new Map();
+                    [...prevItems, ...fetchedPosts].forEach((item) => {
+                        uniqueMap.set(item.id, item); // avoids duplicates by ID
+                    });
+                    return Array.from(uniqueMap.values());
+                });
+
+                setHasMore(hasMorePosts);
                 break;
+
 
             case "StudentClubs":
                 const studentClubRefetchResult = await clubsRefetch({ page, search: searchQuery });
@@ -260,6 +279,12 @@ const FullListPage = () => {
                 const filteredEvents = await filteredEventsRefetch({ page, search: searchQuery });
                 setItems(filteredEvents.data?.getEvents?.events ?? []);
                 setHasMore(filteredEvents.data?.getEvents?.hasMore ?? false);
+                break;
+
+            case "pending-events":
+                const pendingEvents = await pendingeventsRefetch({ page, search: searchQuery })
+                setItems(pendingEvents.data?.getApprovalRequestEvents?.events ?? [])
+                setHasMore(pendingEvents.data?.getApprovalRequestEvents?.hasMore ?? false)
                 break;
 
             case "likedposts":
@@ -304,114 +329,121 @@ const FullListPage = () => {
     };
 
     // Refetches the data when the type/page changes.
-    useEffect(() => {
-        fetchData();
-    }, [type, page]);
+    // useEffect(() => {
+    //     fetchData();
+    // }, [type, page, searchQuery]);
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            // if (!studentId) return;
+        // const fetchData = async () => {
+        //     // if (!studentId) return;
 
-            switch (type) {
-                case "ongoingClubs":
-                    if (ongoingClubData?.getClubs?.clubs) {
-                        setItems(ongoingClubData?.getClubs?.clubs);
-                        // console.log(items)
-                        setHasMore(ongoingClubData?.getClubs?.hasMore);
-                    }
-                    break;
+        //     switch (type) {
+        //         case "ongoingClubs":
+        //             if (ongoingClubData?.getClubs?.clubs) {
+        //                 setItems(ongoingClubData?.getClubs?.clubs);
+        //                 // console.log(items)
+        //                 setHasMore(ongoingClubData?.getClubs?.hasMore);
+        //             }
+        //             break;
 
-                case "clubPosts":
-                    if (!clubId) break;
-                    const clubPostRes = await getPosts({
-                        variables: {
-                            input: {
-                                clubId,
-                                page,
-                                limit: itemsPerPage,
-                                search: searchQuery
-                            }
-                        }
-                    });
-                    if (clubPostRes?.data?.getPosts?.posts) {
-                        setItems(clubPostRes.data.getPosts.posts);
-                        setHasMore(clubPostRes.data.getPosts.hasMore);
-                    }
-                    break;
+        //         case "clubPosts":
+        //             if (!clubId) break;
+        //             const clubPostRes = await getPosts({
+        //                 variables: {
+        //                     input: {
+        //                         clubId,
+        //                         page,
+        //                         limit: itemsPerPage,
+        //                         search: searchQuery
+        //                     }
+        //                 }
+        //             });
+        //             if (clubPostRes?.data?.getPosts?.posts) {
+        //                 setItems(clubPostRes.data.getPosts.posts);
+        //                 setHasMore(clubPostRes.data.getPosts.hasMore);
+        //             }
+        //             break;
 
-                case "StudentClubs":
-                    if (clubsData?.getUserJoinedClubs?.clubs) {
-                        setItems(clubsData.getUserJoinedClubs.clubs);
-                        setHasMore(clubsData.getUserJoinedClubs.hasMore);
-                    }
-                    break;
+        //         case "StudentClubs":
+        //             if (clubsData?.getUserJoinedClubs?.clubs) {
+        //                 setItems(clubsData.getUserJoinedClubs.clubs);
+        //                 setHasMore(clubsData.getUserJoinedClubs.hasMore);
+        //             }
+        //             break;
 
-                case "events":
-                    if (eventsData?.getUserRegisteredEvents?.events) {
-                        setItems(eventsData.getUserRegisteredEvents.events);
-                        setHasMore(eventsData.getUserRegisteredEvents.hasMore);
-                    }
-                    break;
+        //         case "events":
+        //             if (eventsData?.getUserRegisteredEvents?.events) {
+        //                 setItems(eventsData.getUserRegisteredEvents.events);
+        //                 setHasMore(eventsData.getUserRegisteredEvents.hasMore);
+        //             }
+        //             break;
 
-                case "upcoming-events":
-                case "cancelled-events":
-                case "completed-events":
-                    if (filteredEventsData?.getEvents?.events) {
-                        setItems(filteredEventsData?.getEvents?.events);
-                        setHasMore(filteredEventsData?.getEvents?.hasMore);
-                    }
-                    break;
+        //         case "upcoming-events":
+        //         case "cancelled-events":
+        //         case "completed-events":
+        //             if (filteredEventsData?.getEvents?.events) {
+        //                 setItems(filteredEventsData?.getEvents?.events);
+        //                 setHasMore(filteredEventsData?.getEvents?.hasMore);
+        //             }
+        //             break;
 
-                case "clubEvents":
-                    if (clubeventsData?.getEvents?.events) {
-                        setItems(clubeventsData?.getEvents?.events);
-                        setHasMore(clubeventsData?.getEvents?.hasMore);
-                    }
-                    break;
+        //         case "pending-events":
+        //             if (pendingeventsData?.getApprovalRequestEvents?.events) {
+        //                 setItems(pendingeventsData?.getApprovalRequestEvents?.events);
+        //                 setHasMore(pendingeventsData?.getApprovalRequestEvents?.hasMore);
+        //             }
+        //             break;
 
-                case "likedposts":
-                    if (likedPostsData?.getLikedPosts?.posts) {
-                        setItems(likedPostsData.getLikedPosts.posts);
-                        setHasMore(likedPostsData.getLikedPosts.hasMore);
-                    }
-                    break;
+        //         case "clubEvents":
+        //             if (clubeventsData?.getEvents?.events) {
+        //                 setItems(clubeventsData?.getEvents?.events);
+        //                 setHasMore(clubeventsData?.getEvents?.hasMore);
+        //             }
+        //             break;
 
-                case "posts":
-                    const res = await getPosts({
-                        variables: {
-                            input: {
-                                userId: studentId,
-                                page,
-                                limit: itemsPerPage,
-                                userPostsOnly: true,
-                                search: searchQuery
-                            }
-                        }
-                    });
+        //         case "likedposts":
+        //             if (likedPostsData?.getLikedPosts?.posts) {
+        //                 setItems(likedPostsData.getLikedPosts.posts);
+        //                 setHasMore(likedPostsData.getLikedPosts.hasMore);
+        //             }
+        //             break;
 
-                    if (res?.data?.getPosts?.posts) {
-                        const uniquePosts = res.data.getPosts.posts.filter(
-                            (post: any, index: any, self: any) =>
-                                index === self.findIndex((p: any) => p.id === post.id)
-                        );
-                        setItems(uniquePosts);
-                        setHasMore(res.data.getPosts.hasMore);
-                    }
-                    break;
+        //         case "posts":
+        //             const res = await getPosts({
+        //                 variables: {
+        //                     input: {
+        //                         userId: studentId,
+        //                         page,
+        //                         limit: itemsPerPage,
+        //                         userPostsOnly: true,
+        //                         search: searchQuery
+        //                     }
+        //                 }
+        //             });
 
-                case "ongoingGroups":
-                    if (groupData?.getAllGroups?.groups) {
-                        setItems(groupData.getAllGroups.groups);
-                        setHasMore(groupData.getAllGroups.hasMore);
-                    }
-                    break;
+        //             if (res?.data?.getPosts?.posts) {
+        //                 const uniquePosts = res.data.getPosts.posts.filter(
+        //                     (post: any, index: any, self: any) =>
+        //                         index === self.findIndex((p: any) => p.id === post.id)
+        //                 );
+        //                 setItems(uniquePosts);
+        //                 setHasMore(res.data.getPosts.hasMore);
+        //             }
+        //             break;
 
-                default:
-                    setItems([]);
-                    break;
-            }
-        };
+        //         case "ongoingGroups":
+        //             if (groupData?.getAllGroups?.groups) {
+        //                 setItems(groupData.getAllGroups.groups);
+        //                 setHasMore(groupData.getAllGroups.hasMore);
+        //             }
+        //             break;
+
+        //         default:
+        //             setItems([]);
+        //             break;
+        //     }
+        // };
 
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -422,7 +454,7 @@ const FullListPage = () => {
         alert(`${label} clicked for item ID: ${item.id}`);
     };
 
-    if (clubLoading || eventLoading || LikedPostLoading || postLoading || ongoingClubLoading || clubeventsLoading || filteredEventsLoading || groupLoading) {
+    if (clubLoading || eventLoading || LikedPostLoading || postLoading || ongoingClubLoading || clubeventsLoading || filteredEventsLoading || groupLoading || pendingeventLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <ScaleLoader color="#0070FF" />
@@ -430,7 +462,7 @@ const FullListPage = () => {
         )
     }
 
-    if (clubError || eventError || LikedPostError || postError || ongoingClubError || filteredEventsError || groupError) return <p className="text-red-500">Error fetching Data</p>;
+    if (clubError || eventError || LikedPostError || postError || ongoingClubError || filteredEventsError || groupError || pendingeventError) return <p className="text-red-500">Error fetching Data</p>;
 
     const renderItem = (item: any) => {
         switch (type) {
@@ -461,21 +493,23 @@ const FullListPage = () => {
 
             case "StudentClubs":
                 return (
-                    <div key={item.id} className="flex bg-background-light p-4 rounded-lg border border-border-default shadow-sm">
-                        <img src={item.imageUrl} alt={item.name} className="w-20 h-20 rounded object-cover mr-4" />
-                        <div className="flex flex-col justify-between flex-grow">
-                            <div>
-                                <h3 className="text-base font-semibold text-default">{item.name}</h3>
-                                <p className="text-muted text-sm">{item.category}</p>
+                    <Link to={`/clubs/details/${item.id}`} key={item.id}>
+                        <div key={item.id} className="flex bg-background-light p-4 rounded-lg border border-border-default shadow-sm">
+                            <img src={item.imageUrl} alt={item.name} className="w-20 h-20 rounded object-cover mr-4" />
+                            <div className="flex flex-col justify-between flex-grow">
+                                <div>
+                                    <h3 className="text-base font-semibold text-default">{item.name}</h3>
+                                    <p className="text-muted text-sm">{item.category}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleAction("Remove Club", item)}
+                                    className="mt-2 bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded w-fit"
+                                >
+                                    Remove from Club
+                                </button>
                             </div>
-                            <button
-                                onClick={() => handleAction("Remove Club", item)}
-                                className="mt-2 bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded w-fit"
-                            >
-                                Remove from Club
-                            </button>
                         </div>
-                    </div>
+                    </Link>
                 );
 
             case "clubPosts":
@@ -512,14 +546,14 @@ const FullListPage = () => {
                 return (
                     <div key={item.id} className="flex flex-col w-fit h-full border border-border-default rounded-md p-2 bg-background-light shadow-sm">
                         <Post post={item} />
-                        <div className="flex justify-end mt-3">
+                        {/* <div className="flex justify-end mt-3">
                             <button
                                 onClick={() => handleAction("Unlike Post", item)}
                                 className="px-3 py-1 text-xs bg-yellow-500 hover:bg-yellow-600 text-white rounded"
                             >
                                 Unlike
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 );
 
@@ -527,8 +561,9 @@ const FullListPage = () => {
             case "cancelled-events":
             case "completed-events":
             case "clubEvents":
+            case "pending-events":
                 return (
-                    <Link to={`/event/details/${item.id}`} key={item.id}>
+                    <Link to={`/event/details/${item.id}`} key={item.id} state={{ type: type }}>
                         <div key={item.id} className="flex flex-col h-full border border-border-default rounded-md p-4 bg-background-light shadow-sm">
                             <EventCard event={item} />
                             <div className="flex justify-end mt-3">
@@ -538,7 +573,7 @@ const FullListPage = () => {
                                         e.stopPropagation(); // Stop bubbling up the click
                                         openDeleteConfirmation(item.id);
                                     }}
-                                    className="px-3 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded"
+                                    className={`px-3 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded ${type === "pending-events" ? "hidden" : ""}`}
                                 >
                                     Delete Event
                                 </button>

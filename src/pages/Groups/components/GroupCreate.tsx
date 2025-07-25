@@ -29,7 +29,7 @@ function GroupCreate() {
     const location = useLocation();
     const navigate = useNavigate();
     const isEditMode = location.state?.mode === "edit";
-    const editData = location.state?.clubData || null;
+    const editData = location.state?.groupData || null;
     const selectedMemberIds: string[] = location.state?.selectedMemberIds || [];
 
     const [showImageModal, setShowImageModal] = useState(false);
@@ -80,7 +80,7 @@ function GroupCreate() {
         const reader = new FileReader();
         reader.onloadend = () => {
             setGroupThumbnail(reader.result as string);
-            toast.success("Club Thumbnail uploaded.");
+            toast.success("Group Thumbnail uploaded.");
         };
         reader.readAsDataURL(file);
     };

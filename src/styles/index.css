@@ -149,3 +149,7 @@ option {
     color: #FFFFFF;
     background-color: #0B1E29;
 }
+
+.hide-native-time::-webkit-calendar-picker-indicator {
+    display: none;
+}

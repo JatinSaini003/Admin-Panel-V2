@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useQuery, useMutation } from "@apollo/client";
 
 // Queries
-import { Get_EventDetails, Update_Event } from "../../../queries/eventQueries";
+import { Get_EventDetails, Update_Event, Update_Event_Status } from "../../../queries/eventQueries";
 
 // Components
 import {
+    ConfirmationPopup,
     Input,
     Profile,
 } from "../../../components/UI/Reusable/index";
@@ -15,17 +16,22 @@ import {
 import { ScaleLoader } from "react-spinners";
 
 // Icons
-import { BookOpen, User, BookOpenCheck, MapPinHouse, ChevronDown } from "lucide-react";
+import { BookOpen, User, BookOpenCheck, MapPinHouse, ChevronDown, Calendar, Clock } from "lucide-react";
 import { toast } from "react-toastify";
 
 const EventDetails = () => {
     const { eventId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const type = location.state.type;
 
     const [event, setEvent] = useState<any>(null);
 
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<any>({});
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState<"ACCEPTED" | "REJECTED" | null>(null);
+
 
     const [UpdateEvent, { loading: isUpdating }] = useMutation(Update_Event);
 
@@ -47,6 +53,11 @@ const EventDetails = () => {
         }
     }, [eventData]);
 
+    // Event Status Updation Mutation
+    const [updateEventStatus] = useMutation(Update_Event_Status, {
+        refetchQueries: ["GetUserRequestedEvents"],
+        awaitRefetchQueries: true,
+    });
 
     const handleUpdate = async () => {
         try {
@@ -80,6 +91,30 @@ const EventDetails = () => {
         setIsEditing(false);
     };
 
+    const handleApproveEventRequest = async () => {
+        if (!selectedStatus || !eventId) return;
+
+        try {
+            await updateEventStatus({
+                variables: {
+                    input: {
+                        id: eventId,
+                        approvalStatus: selectedStatus,
+                    },
+                },
+            });
+
+            toast.success(`Event ${selectedStatus === "ACCEPTED" ? "approved" : "rejected"} successfully!`);
+            setIsPopupOpen(false);
+            navigate(-1);
+        } catch (err) {
+            toast.error("Action failed. Please try again.");
+            console.error(err);
+            setIsPopupOpen(false);
+        }
+    };
+
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -102,20 +137,43 @@ const EventDetails = () => {
                     heading={event?.name || ""}
                     subHeading="Event Thumbnail"
                     actionButtons={
-                        <>
-                            <button
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-3 rounded text-sm"
-                                onClick={() => setIsEditing((prev) => !prev)}
-                            >
-                                {isEditing ? "Cancel Edit" : "Edit Club"}
-                            </button>
-                            <button
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-3 rounded text-sm"
-                                onClick={() => navigate(`/event/details/${event.id}/members`)}
-                            >
-                                View All Members
-                            </button>
-                        </>
+                        type === "pending-events" ? (
+                            <>
+                                <button
+                                    className="bg-transparent text-primary border border-primary hover:bg-primary hover:text-white px-5 py-3 rounded text-sm"
+                                    onClick={() => {
+                                        setSelectedStatus("ACCEPTED");
+                                        setIsPopupOpen(true);
+                                    }}
+                                >
+                                    Approve
+                                </button>
+                                <button
+                                    className="bg-transparent text-danger border border-danger hover:bg-danger hover:text-white px-5 py-3 rounded text-sm"
+                                    onClick={() => {
+                                        setSelectedStatus("REJECTED");
+                                        setIsPopupOpen(true);
+                                    }}
+                                >
+                                    Reject
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-3 rounded text-sm"
+                                    onClick={() => setIsEditing((prev) => !prev)}
+                                >
+                                    {isEditing ? "Cancel Edit" : "Edit Club"}
+                                </button>
+                                <button
+                                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-3 rounded text-sm"
+                                    onClick={() => navigate(`/event/details/${event.id}/members`)}
+                                >
+                                    View All Members
+                                </button>
+                            </>
+                        )
                     }
                 />
 
@@ -166,6 +224,7 @@ const EventDetails = () => {
                         placeholder="Enter Event start Date"
                         required
                         type="date"
+                        icon={Calendar}
                         disabled={!isEditing}
                         value={formData.startDateTime}
                         onChange={(e) => setFormData({ ...formData, startDateTim: e.target.value })}
@@ -177,6 +236,7 @@ const EventDetails = () => {
                         placeholder="Enter Event End Date"
                         // required
                         type="date"
+                        icon={Calendar}
                         disabled={!isEditing}
                         value={formData.endDateTime || ""}
                         onChange={(e) => setFormData({ ...formData, endDateTime: e.target.value })}
@@ -188,6 +248,7 @@ const EventDetails = () => {
                         placeholder="Enter Timing"
                         required
                         type="time"
+                        icon={Clock}
                         disabled={!isEditing}
                         value={formData.scheduleTime}
                         onChange={(e) => {
@@ -258,7 +319,21 @@ const EventDetails = () => {
                         </button>
                     </div>
                 )}
+
+
             </div>
+
+            <ConfirmationPopup
+                isOpen={isPopupOpen}
+                message={`Are you sure you want to ${selectedStatus === "ACCEPTED" ? "approve" : "reject"} this event?`}
+                confirmLabel={selectedStatus === "ACCEPTED" ? "Approve" : "Reject"}
+                cancelLabel="Cancel"
+                onConfirm={handleApproveEventRequest}
+                onCancel={() => {
+                    setSelectedStatus(null);
+                    setIsPopupOpen(false);
+                }}
+            />
 
         </div>
     );

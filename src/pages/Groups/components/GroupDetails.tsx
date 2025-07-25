@@ -15,7 +15,7 @@ import {
 import { ScaleLoader } from "react-spinners";
 
 // Icons
-import { BookOpen, Calendar, User } from "lucide-react";
+import { BookOpen, User } from "lucide-react";
 import { toast } from "react-toastify";
 
 const GroupDetails = () => {
@@ -40,7 +40,7 @@ const GroupDetails = () => {
             // console.log(details)
             const formattedGroup = {
                 ...details,
-                createdOn: details.createdAt
+                // createdOn: details.createdAt
             };
             setGroup(formattedGroup);
             setFormData(formattedGroup);
@@ -126,20 +126,6 @@ const GroupDetails = () => {
                     />
 
                     <Input
-                        label="Created On"
-                        name="createdOn"
-                        icon={Calendar}
-                        required
-                        type="text"
-                        disabled={true}
-                        value={formData.createdOn}
-                        onChange={(e) => setFormData({ ...formData, createdOn: e.target.value })}
-                    />
-
-                </div>
-
-                <div className="grid mt-4">
-                    <Input
                         label="Description"
                         name="description"
                         icon={BookOpen}
@@ -150,7 +136,23 @@ const GroupDetails = () => {
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
+
+                    {/* <Input
+                        label="Created On"
+                        name="createdOn"
+                        icon={Calendar}
+                        required
+                        type="text"
+                        disabled={true}
+                        value={formData.createdOn}
+                        onChange={(e) => setFormData({ ...formData, createdOn: e.target.value })}
+                    /> */}
+
                 </div>
+
+                {/* <div className="grid mt-4">
+
+                </div> */}
 
 
                 {isEditing && (

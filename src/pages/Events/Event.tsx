@@ -5,7 +5,7 @@ import {
 import { toast } from "react-toastify";
 import { ScaleLoader } from "react-spinners";
 
-import { Get_Events, Delete_Event } from "../../queries/eventQueries";
+import { Get_Events, Delete_Event, Get_User_Requested_Events } from "../../queries/eventQueries";
 
 import {
     CreateItem,
@@ -55,24 +55,47 @@ export const handleEventDelete = async (id: string, client: ApolloClient<object>
 
 const Events = () => {
 
-    const renderEventCarousel = (status: string, label: string) => {
-        const {
-            data,
-            loading,
-            error,
-        } = useQuery(Get_Events, {
-            variables: {
-                input: {
-                    status,
-                    limit: 10,
-                    page: 1,
-                },
+    const renderEventCarousel = (type: string, status: string, label: string) => {
+        const variables = {
+            input: {
+                status,
+                limit: 10,
+                page: 1,
             },
+        };
+
+        //Approved
+        const {
+            data: approvedData,
+            loading: loadingApproved,
+            error: errorApproved,
+        } = useQuery(Get_Events, {
+            variables,
+            skip: type !== "Approved",
             notifyOnNetworkStatusChange: true,
         });
+        // console.log("Approved : ", approvedData)
 
-        const eventData: EventType[] = data?.getEvents?.events ?? [];
-        // console.log(eventData)
+        // Pending query
+        const {
+            data: pendingData,
+            loading: loadingPending,
+            error: errorPending,
+        } = useQuery(Get_User_Requested_Events, {
+            variables: { input: { limit: 10, page: 1 } },
+            skip: type !== "Pending",
+            notifyOnNetworkStatusChange: true,
+        });
+        // console.log(pendingData)
+
+        // Select based on type
+        const data = type === "Approved" ? approvedData : pendingData;
+        const loading = type === "Approved" ? loadingApproved : loadingPending;
+        const error = type === "Approved" ? errorApproved : errorPending;
+
+        const eventData: EventType[] = type === "Approved" ? data?.getEvents?.events ?? [] : data?.getApprovalRequestEvents?.events ?? [];
+        ;
+        // console.log("Event Data : ", eventData)
 
         if (error) {
             return (
@@ -103,8 +126,8 @@ const Events = () => {
                             />
                         )}
                         className="mt-3"
-                        type={`${status.toLowerCase()}-events`}
-                        exploreLink={status.toLowerCase()}
+                        type={`${type === "Pending" ? "pending" : status.toLowerCase()}-events`}
+                        exploreLink={type === "Pending" ? "approval-pending" : status.toLowerCase()}
                         buttonLabel="See All"
                     />
                 )}
@@ -124,9 +147,10 @@ const Events = () => {
                 </section>
 
                 {/* Carousel Sections */}
-                {renderEventCarousel("UPCOMING", "Upcoming Events")}
-                {renderEventCarousel("HAPPENED", "Completed Events")}
-                {renderEventCarousel("CANCELLED", "Cancelled Events")}
+                {renderEventCarousel("Pending", "UPCOMING", "Student Requested Events")}
+                {renderEventCarousel("Approved", "UPCOMING", "Upcoming Events")}
+                {renderEventCarousel("Approved", "HAPPENED", "Completed Events")}
+                {renderEventCarousel("Approved", "CANCELLED", "Cancelled Events")}
             </div>
         </div>
     );

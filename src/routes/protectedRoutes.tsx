@@ -129,6 +129,15 @@ const protectedRoutes: CustomRoute[] = [
                 },
             },
             {
+                path: "events/approval-pending",
+                element: <FullListPage />,
+                meta: {
+                    pageName: "Pending Approval Events",
+                    pageDescription: "Oversee Events and manage their status",
+                    backButton: true
+                },
+            },
+            {
                 path: "event/details/:eventId",
                 element: <EventDetails />,
                 meta: {

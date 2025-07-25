@@ -19,6 +19,7 @@ import {
     Get_Event_Image_UploadUrl,
     GET_LOCATIONS
 } from "../../../queries/eventQueries";
+import { Calendar, Clock } from "lucide-react";
 
 interface EventFormData {
     name: string;
@@ -104,7 +105,7 @@ function EventCreate() {
 
     const onSubmit = async (formData: EventFormData) => {
         if (!isEditMode && eventThumbnail === Upload) {
-            toast.error("Club thumbnail is required.");
+            toast.error("Event thumbnail is required.");
             return;
         }
 
@@ -136,7 +137,7 @@ function EventCreate() {
             } else {
                 // console.log("Payload being sent to server:", payload);
                 await createEvent({ variables: { input: payload } });
-                toast.success("Club Created Successfully");
+                toast.success("Event Created Successfully");
                 setActionType("create");
             }
 
@@ -182,7 +183,7 @@ function EventCreate() {
             {/* Image Upload Modal */}
             {showImageModal && (
                 <ImageUploadModal
-                    uploadType="club"
+                    uploadType="event"
                     onClose={() => setShowImageModal(false)}
                     onImageSave={handleImageSave}
                 />
@@ -238,6 +239,7 @@ function EventCreate() {
                         placeholder="Enter Event start Date"
                         required
                         type="date"
+                        icon={Calendar}
                         value={formValues.startDateTime}
                         onChange={(e) => setValue("startDateTime", e.target.value)}
                         error={!!errors.startDateTime}
@@ -250,6 +252,7 @@ function EventCreate() {
                         placeholder="Enter Event End Date"
                         // required
                         type="date"
+                        icon={Calendar}
                         value={formValues.endDateTime || ""}
                         onChange={(e) => setValue("endDateTime", e.target.value)}
                         error={!!errors.endDateTime}
@@ -262,6 +265,7 @@ function EventCreate() {
                         placeholder="Enter Timing"
                         required
                         type="time"
+                        icon={Clock}
                         value={formValues.scheduleTime}
                         onChange={(e) => {
                             setValue("scheduleTime", e.target.value);
@@ -334,7 +338,7 @@ function EventCreate() {
             {showConfirmation && (
                 <ConfirmationPopup
                     isOpen={showConfirmation}
-                    message={`Club ${actionType === "update" ? "Updated" : "Created"}`}
+                    message={`Event ${actionType === "update" ? "Updated" : "Created"}`}
                     confirmLabel="View All Events"
                     cancelLabel="Stay"
                     onConfirm={() => navigate("/events")}

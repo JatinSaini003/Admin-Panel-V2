@@ -64,8 +64,9 @@ const Groups: React.FC = () => {
                 name: group.name,
                 college: group.collegeId,
                 avatar: group.avatar,
-                Members: group.totalUsers,
+                totalUsers: group.totalUsers,
                 description: group.description,
+                photoId: group.photoId
             })) || []
         );
     }, [data]);

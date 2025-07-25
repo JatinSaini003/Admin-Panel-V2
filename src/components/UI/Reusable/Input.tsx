@@ -37,7 +37,7 @@ const Input: React.FC<CustomInputProps> = ({
     const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement & HTMLSelectElement>(null);
 
     const inputClasses =
-        "flex-1 h-12 bg-background-default text-default text-default outline-none placeholder-default text-description-regular";
+        "flex-1 h-12 bg-background-default text-default outline-none text-description-regular";
 
     const showToggle = type === "password" && onTogglePasswordVisibility;
 
@@ -75,7 +75,7 @@ const Input: React.FC<CustomInputProps> = ({
                         onChange={onChange}
                         required={required}
                         disabled={disabled}
-                        className={inputClasses}
+                        className={`${inputClasses} hide-native-time`}
                         ref={inputRef}
                     />
                 );
@@ -112,7 +112,7 @@ const Input: React.FC<CustomInputProps> = ({
             <div className="flex items-center px-4 bg-transparent border border-border-default rounded-md w-full">
                 {renderInput()}
 
-                {Icon && <Icon className="text-light ml-2 mt-1" size={18} />}
+                {Icon && <Icon className="text-light ml-2 mt-1 cursor-pointer" size={18} onClick={() => inputRef.current?.showPicker()} />}
 
                 {showToggle && (
                     <button

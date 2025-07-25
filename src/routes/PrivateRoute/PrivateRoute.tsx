@@ -1,8 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import React from "react";
-import Lottie from "lottie-react";
-import Hammer from '../../assets/Loader/Hammer.json'
+import { HashLoader } from "react-spinners";
 
 type Props = {
     allowedRoles?: string[];
@@ -15,7 +14,7 @@ const PrivateRoute: React.FC<Props> = ({ allowedRoles, children }) => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen bg-background-default">
-                <Lottie animationData={Hammer} loop />
+                <HashLoader color="#0070FF" />
             </div>
         );
     }

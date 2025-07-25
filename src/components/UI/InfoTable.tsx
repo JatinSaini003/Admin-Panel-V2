@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Lottie from "lottie-react";
-import Hammer from "../../assets/Loader/Hammer.json";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_USER_LIST } from "../../queries/userQueries";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useGlobalSearch } from "../../search/SearchContext";
+import { ScaleLoader } from "react-spinners";
 
 
 // ----- User type definition -----
@@ -179,7 +178,7 @@ const InfoTable: React.FC<InfoTableProps> = ({ limit = 10 }) => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Lottie animationData={Hammer} loop />
+                <ScaleLoader color="#0070FF" />
             </div>
         );
     }
@@ -313,7 +312,7 @@ const InfoTable: React.FC<InfoTableProps> = ({ limit = 10 }) => {
 
                     {userLists.length === 0 && (
                         <tr>
-                            <td colSpan={6} className="text-center py-4 text-muted">
+                            <td colSpan={6} className="text-center py-4 text-black">
                                 No users found.
                             </td>
                         </tr>

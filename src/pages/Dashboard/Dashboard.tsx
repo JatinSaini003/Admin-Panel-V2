@@ -107,12 +107,12 @@ const Dashboard: React.FC = () => {
                 {
                     label: "Happened Events",
                     value: data?.getDashboardData.eventProgress?.HAPPENED ?? 0,
-                    color: "#FFBB38",
+                    color: "#94E9B8",
                 },
                 {
                     label: "Cancelled Events",
                     value: data?.getDashboardData.eventProgress?.CANCELLED ?? 0,
-                    color: "#94E9B8",
+                    color: "#FF0000",
                 },
             ],
         },
@@ -122,17 +122,17 @@ const Dashboard: React.FC = () => {
                 {
                     label: "Pending Users",
                     value: data?.getDashboardData.userVerificationPie?.Pending ?? 0,
-                    color: "#00B69B",
+                    color: "#FFBB38",
                 },
                 {
                     label: "Unverified Users",
                     value: data?.getDashboardData.userVerificationPie?.UnVerified ?? 0,
-                    color: "#FFBB38",
+                    color: "#FF0000",
                 },
                 {
                     label: "Verified Users",
                     value: data?.getDashboardData.userVerificationPie?.Verified ?? 0,
-                    color: "#FF0000",
+                    color: "#00B69B",
                 },
             ],
         },

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { Get_Verification_Requests, HANDLE_VERIFICATION_REQUEST } from "../../queries/verificationQueries";
-import Lottie from "lottie-react";
-import Hammer from "../../assets/Loader/Hammer.json";
 import { useGlobalSearch } from "../../search/SearchContext";
+import { ScaleLoader } from "react-spinners";
 
 
 type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED";
@@ -62,7 +61,7 @@ const PendingVerification: React.FC = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Lottie animationData={Hammer} loop />
+                <ScaleLoader color="#0070FF" />
             </div>
         );
     }

@@ -9,6 +9,7 @@ export const Get_Events = gql`
         endDateTime
         id
         imageId
+        createdAt
         isDeleted
         scheduleTime
         startDateTime
@@ -148,3 +149,37 @@ export const GET_LOCATIONS = gql`
     }
   }
 `;
+
+export const Get_User_Requested_Events = gql`
+  query GetApprovalRequestEvents($input: GetEventsInput!) {
+    getApprovalRequestEvents(input: $input) {
+        hasMore
+        events {
+            description
+            endDateTime
+            id
+            imageId
+            scheduleTime
+            startDateTime
+            name
+            totalMembers
+            mode
+            domain
+            status
+            addedBy
+            scheduleTime
+            venue
+            createdAt
+        }
+    }
+  }
+`;
+
+export const Update_Event_Status = gql`
+  mutation UpdateEventApprovalStatus($input: UpdateEventApprovalStatusInput!) {
+    updateEventApprovalStatus(input: $input) {
+        id
+    }
+  }
+`;
+
