@@ -21,6 +21,7 @@ import GroupCreate from "../pages/Groups/components/GroupCreate";
 import GroupAddMember from "../pages/Groups/components/GroupAddMembers";
 import GroupDetails from "../pages/Groups/components/GroupDetails";
 import GroupMembers from "../pages/Groups/components/GroupMembers";
+import ReportActions from "../pages/ReportsViolations/components/ReportActions";
 
 
 /**
@@ -284,6 +285,15 @@ const protectedRoutes: CustomRoute[] = [
                 meta: {
                     pageName: "Reports & Violations",
                     pageDescription: "Track reported issues and take necessary actions.",
+                },
+            },
+            {
+                path: "reports-violations/:studentId/post/:postId",
+                element: <ReportActions />,
+                meta: {
+                    pageName: "Reports & Violations",
+                    pageDescription: "Track reported issues and take necessary actions.",
+                    backButton: true
                 },
             },
         ],

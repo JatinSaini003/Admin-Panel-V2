@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
         variables: { filters: { filterBy: selectedFilter } },
         notifyOnNetworkStatusChange: true,
     });
-    // console.log("Data : ", data)
+    console.log("Data : ", data)
 
     const timeLabel = getTimeLabel(selectedFilter, selectedLabel);
 
@@ -79,8 +79,8 @@ const Dashboard: React.FC = () => {
         },
         {
             title: "Visits",
-            value: "—",
-            change: "0%",
+            value: data?.getDashboardData.totalVisits?.today?.toString() ?? "-",
+            change: "15%",
             time: timeLabel,
             icon: Visits,
             trend: "up",

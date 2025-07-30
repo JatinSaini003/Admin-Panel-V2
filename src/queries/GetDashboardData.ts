@@ -14,6 +14,12 @@ export const GetDashboardData = gql`
                 Solved
                 UnSolved
             }
+            totalVisits {
+                thisMonth
+                thisWeek
+                thisYear
+                today
+            }
             userVerificationPie {
                 Verified
                 UnVerified
@@ -50,4 +56,10 @@ export const GetDashboardData = gql`
             }
         }
     }
+`;
+
+export const HEARTBEAT_MUTATION = gql`
+  mutation {
+    heartbeat
+  }
 `;

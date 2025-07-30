@@ -1,62 +1,127 @@
 import React from "react";
+import { useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-// import ReportPost from "./ReportPost";
+import { getReportedPostOfAStudent } from "../../../queries/reportQueries";
+import ReportPost from "./ReportPost";
 
-const ReportDetails: React.FC = () => {
+interface ReportedPost {
+    id: string;
+    title?: string;
+    description?: string;
+    createdAt: string;
+    user: {
+        id: string;
+        name: string;
+        avatar?: string;
+        userName: string;
+    };
+    reason?: string;
+    reportCategory?: string;
+}
+
+interface QueryData {
+    getReportedPostsOfaStudent: {
+        hasMore: boolean;
+        posts: ReportedPost[];
+    };
+}
+
+interface QueryVars {
+    id: string;
+}
+
+interface ReportDetailsProps {
+    studentId: string;
+    onClose: () => void;
+}
+
+const ReportDetails: React.FC<ReportDetailsProps> = ({ studentId, onClose }) => {
+    const { loading, error, data, refetch } = useQuery<QueryData, QueryVars>(
+        getReportedPostOfAStudent,
+        {
+            variables: { id: studentId },
+            fetchPolicy: "network-only",
+            notifyOnNetworkStatusChange: true,
+        }
+    );
+
     const navigate = useNavigate();
 
     return (
-        <div className="fixed inset-0 z-10 min-h-screen p-4 bg-black/50 flex justify-center items-center">
-            <div className="flex flex-col gap-4 border border-white bg-[#0B1E29] w-[688px] h-[460px] p-10">
-                <div className="grid md:grid-cols-2 gap-4">
-                    {/* Left: Post */}
-                    {/* <ReportPost /> */}
+        <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center p-4">
+            <div className="bg-background-default w-full max-w-6xl max-h-[90vh] overflow-auto p-8 rounded-lg space-y-8 shadow-xl">
 
-                    {/* Right: Info Section */}
-                    <div className="space-y-4">
-                        {/* Reported By */}
-                        <div className="bg-[#243139] p-3 shadow-xl border border-white">
-                            <span className="text-white pb-1 font-medium text-sm">
-                                Reported by
-                            </span>
-                            <div className="flex items-center gap-3 mt-2">
-                                <img
-                                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop"
-                                    alt="Reporter"
-                                    className="w-12 h-12 rounded-full object-cover"
-                                />
-                                <div>
-                                    <p className="text-white text-lg font-semibold">
-                                        Daksh Malhotra
-                                    </p>
-                                    <p className="text-[#BEBAB9] text-sm">Amity University</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Reported On */}
-                        <div className="bg-[#243139] p-3 shadow-xl border border-white">
-                            <span className="text-white text-sm font-medium">Reported on</span>
-                            <p className="text-white text-xl font-medium mt-1">
-                                March 10, 2025
-                            </p>
-                        </div>
-
-                        {/* Report Status */}
-                        <div className="bg-[#243139] p-3 shadow-xl border border-white">
-                            <span className="text-white text-sm font-medium">Report Status</span>
-                            <p className="text-white text-xl font-medium mt-1">Pending</p>
-                        </div>
-                    </div>
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <h2 className="text-white text-2xl font-semibold">Reported Posts</h2>
+                    <button
+                        onClick={() => refetch()}
+                        className="text-sm text-primary hover:underline"
+                    >
+                        Refresh
+                    </button>
                 </div>
 
-                {/* Action Button */}
-                <button
-                    onClick={() => navigate("/report-details")}
-                    className="mx-auto w-[180px] bg-[#f85f36] hover:bg-[#e54d26] text-white text-lg font-medium py-3 px-8 transition-colors duration-200"
-                >
-                    Take Action
-                </button>
+                {/* Status states */}
+                {loading && (
+                    <div className="text-muted text-center py-12">Loading reported posts...</div>
+                )}
+                {error && (
+                    <div className="text-danger text-center py-12">Error: {error.message}</div>
+                )}
+                {!loading && !error && data?.getReportedPostsOfaStudent.posts.length === 0 && (
+                    <div className="text-muted text-center py-12">No reported posts found.</div>
+                )}
+
+                {/* Posts List */}
+                {!loading && !error && data?.getReportedPostsOfaStudent.posts.map((post) => (
+                    <div
+                        key={post.id}
+                        className="grid md:grid-cols-2 gap-6 p-4 rounded-lg bg-background-active transition cursor-pointer"
+                        onClick={() => navigate(`${studentId}/post/${post.id}`)}
+                    >
+                        {/* Post preview */}
+                        <div className="pr-4">
+                            <ReportPost post={post} />
+                        </div>
+
+                        {/* Report Details */}
+                        <div className="text-white space-y-4 text-sm">
+                            <div>
+                                <span className="text-gray-400 font-medium">Reported By:</span>
+                                <p className="text-base">{post.user.name} (@{post.user.userName})</p>
+                            </div>
+                            <div>
+                                <span className="text-gray-400 font-medium">Category:</span>
+                                <p>{post.reportCategory || "—"}</p>
+                            </div>
+                            <div>
+                                <span className="text-gray-400 font-medium">Reason:</span>
+                                <p>{post.reason || "—"}</p>
+                            </div>
+                            <div>
+                                <span className="text-gray-400 font-medium">Reported On:</span>
+                                <p>
+                                    {new Date(post.createdAt).toLocaleDateString(undefined, {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+                {/* Close Button */}
+                <div className="flex justify-end pt-4">
+                    <button
+                        onClick={onClose}
+                        className="bg-[#f85f36] hover:bg-[#e54d26] text-white font-medium py-2 px-6 rounded-md transition duration-200"
+                    >
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     );
