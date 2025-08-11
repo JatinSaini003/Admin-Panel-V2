@@ -1,4 +1,4 @@
-import { useEffect, useState, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { Outlet, useLocation, useMatches, useNavigate } from "react-router-dom";
 import { Search, ChevronDown, ChevronLeft } from "lucide-react";
 import { useAuth } from "../../auth/useAuth";
@@ -13,24 +13,6 @@ import PeerHubSmallLogo from "../../assets/img/peerhub-small-logo.png";
 import AdminImage from "../../assets/img/AdminImage.png";
 import { clearToken } from "../../auth/authUtils";
 import { useGlobalSearch } from "../../search/SearchContext";
-import { useMutation } from "@apollo/client";
-import { HEARTBEAT_MUTATION } from "../../queries/GetDashboardData";
-
-
-export const useHeartbeat = () => {
-    const [heartbeat] = useMutation(HEARTBEAT_MUTATION);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            heartbeat();
-        }, 30 * 60 * 1000); // every 30 min
-
-        // Trigger once immediately on mount
-        heartbeat();
-
-        return () => clearInterval(interval);
-    }, []);
-};
 
 /**
  * Dashboard Layout Component
@@ -43,9 +25,6 @@ function DashboardLayout() {
     const matches = useMatches();
     const { user } = useAuth();
     const navigate = useNavigate();
-
-    // use Heartbeat
-    useHeartbeat();
 
     // Global Search State
     const { searchQuery, setSearchQuery } = useGlobalSearch();

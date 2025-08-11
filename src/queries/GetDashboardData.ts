@@ -57,9 +57,3 @@ export const GetDashboardData = gql`
         }
     }
 `;
-
-export const HEARTBEAT_MUTATION = gql`
-  mutation {
-    heartbeat
-  }
-`;

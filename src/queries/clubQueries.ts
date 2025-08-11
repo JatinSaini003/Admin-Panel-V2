@@ -33,7 +33,6 @@ export const Get_Club_Details = gql`
       name
       status
       totalMembers
-      recentJoinedUsers
       isJoined
       createdAt
       slug
